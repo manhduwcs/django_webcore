@@ -2,8 +2,8 @@
 <style>
   /* Custom styles for focused rows */
   tr:focus {
-    background-color: #1e262b;
-    color: white;
+    background-color: #1e262b !important;
+    color: white !important;
   }
 </style>
 <div class="container mt-3">
@@ -19,8 +19,8 @@
         <th>Full Name</th>
         <th>Phone</th>
         <th>Email</th>
+        <th>Role</th>
         <th>Action</th>
-        
       </tr>
     </thead>
     <tbody>
@@ -36,6 +36,7 @@
         <td>{{ user.fullname }}</td>
         <td>{{ user.phone }}</td>
         <td>{{ user.email }}</td>
+        <td>{{ user.role }}</td>
         <td>
           <div class="d-flex">
             <a

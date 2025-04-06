@@ -12,7 +12,7 @@ from django.core.validators import (
     validate_email,
     RegexValidator,
 )
-from user.models import User
+from user.models import Role, User
 from user.models import User
 from django.contrib.auth.forms import PasswordChangeForm
 
@@ -46,6 +46,11 @@ class FormRegister(forms.ModelForm):
             }
         ),
         label="Confirm Password",
+        error_messages={
+            'required': 'Please confirm your password.',
+            'max_length': 'Password confirmation cannot exceed 100 characters.',
+            'min_length': 'Password confirmation must be at least 8 characters long.',
+        }
     )
     
     password = forms.CharField(
@@ -58,12 +63,17 @@ class FormRegister(forms.ModelForm):
         label="Enter Password",
         validators=[
             MaxLengthValidator(100), MinLengthValidator(8)
-        ]
+        ],
+        error_messages={
+            'required': 'Please enter a password.',
+            'max_length': 'Password cannot exceed 100 characters.',
+            'min_length': 'Password must be at least 8 characters long.',
+        }
     )
 
     class Meta:
         model = User
-        fields = ["username", "fullname", "phone", "email", "password", "re_password"]
+        fields = ["username", "fullname", "phone", "email", "password", "re_password", "role"]
         widgets = {
             "username": forms.TextInput(
                 attrs={
@@ -81,7 +91,7 @@ class FormRegister(forms.ModelForm):
                 attrs={
                     "class": "form-control mt-1",
                     "placeholder": "Phone",
-                }
+                },
             ),
             "email": forms.EmailInput(
                 attrs={
@@ -89,6 +99,8 @@ class FormRegister(forms.ModelForm):
                     "placeholder": "Email",
                 }
             ),
+            # Hidden Input in Django's Form
+            "role": forms.HiddenInput
         }
 
     def clean(self):
@@ -101,6 +113,7 @@ class FormRegister(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['role'].initial = Role.USER
 
 class FormUpdateUser(forms.ModelForm):
     re_password = forms.CharField(
@@ -130,7 +143,7 @@ class FormUpdateUser(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["username", "fullname", "phone", "email", "password", "re_password"]
+        fields = ["username", "fullname", "phone", "email", "password", "re_password", "role"]
         widgets = {
             "username": forms.TextInput(
                 attrs={
@@ -156,6 +169,11 @@ class FormUpdateUser(forms.ModelForm):
                     "placeholder": "Email",
                 }
             ),
+            "role": forms.Select(
+                attrs={
+                    "class": "form-control mt-1",
+                }
+            )
         }
 
     def clean(self):
@@ -175,6 +193,7 @@ class FormUpdateUser(forms.ModelForm):
             self.fields['fullname'].initial = self.user.fullname
             self.fields['phone'].initial = self.user.phone
             self.fields['email'].initial = self.user.email
+            self.fields['role'].initial = self.user.role
 
 class FormCreateUser(forms.ModelForm):
     re_password = forms.CharField(
@@ -202,7 +221,7 @@ class FormCreateUser(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["username", "fullname", "phone", "email", "password", "re_password"]
+        fields = ["username", "fullname", "phone", "email", "password", "re_password", "role"]
         widgets = {
             "username": forms.TextInput(
                 attrs={
@@ -228,6 +247,11 @@ class FormCreateUser(forms.ModelForm):
                     "placeholder": "Email",
                 }
             ),
+            "role": forms.Select(
+                attrs={
+                    "class": "form-control mt-1",
+                }
+            )
         }
 
     def clean(self):

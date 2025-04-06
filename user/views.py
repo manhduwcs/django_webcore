@@ -1,16 +1,18 @@
 import re
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from home import admin
 from user.forms import FormCreateUser, FormLogin, FormRegister, FormUpdateUser
 from django.contrib.auth.forms import AuthenticationForm
 from user.models import User
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from user.decorator import require_user_login
+from user.decorator import require_user_login, admin_only
 
 # User view.
 @require_user_login
+@admin_only
 def user(request):
     # minus "-" : descending order.
     users = User.objects.order_by('-user_id')
@@ -71,7 +73,9 @@ def register_user(request):
     if request.method=='POST':
         form = FormRegister(request.POST)
         if form.is_valid():
-            user = form.save()
+            user = form.save(commit=False)
+            user.password = make_password(user.password)
+            user.save()
             login(request, user)
             return redirect(reverse('home'))
         else:
@@ -84,6 +88,7 @@ def register_user(request):
 # normal approach : get the pre-saving user instance by commit=False,
 # then modify this user, then save()
 @require_user_login
+@admin_only
 def create_user(request):
     if(request.method=='POST'):
         form = FormCreateUser(request.POST)
@@ -98,6 +103,7 @@ def create_user(request):
     return render(request, 'user/create-user.html', {'form':form})
 
 @require_user_login
+@admin_only
 def update_user(request, user_id):
     user = get_object_or_404(User, user_id = user_id)
     old_password = user.password
@@ -120,6 +126,7 @@ def update_user(request, user_id):
     return render(request, 'user/update-user.html', {'form':form, 'user':user})
 
 @require_user_login
+@admin_only
 def delete_user(request, user_id):
     user = get_object_or_404(User, user_id = user_id)
     if request.method=='POST':
