@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <title>Register</title>
+    <style>
+      .errorlist {
+        font-size: 12px;
+        color: red;
+      }
+    </style>
+  </head>
+  <body class="bg-light d-flex align-items-center min-vh-100">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="card mt-5">
+            <div class="card-body">
+              <h2 class="text-center text-primary mb-4">Register New User</h2>
+              <form action="{% url 'register' %}" method="POST">
+                {% csrf_token %} {{ form.as_p }}
+                <button type="submit" class="btn btn-success btn-block">
+                  Register
+                </button>
+              </form>
+              <p class="mt-4 text-center text-muted">
+                Already have an account?
+                <a href="{% url 'login' %}" class="text-info">Login</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

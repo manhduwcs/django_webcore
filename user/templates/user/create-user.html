@@ -1,0 +1,25 @@
+{% extends 'home/base.html' %} {% block content %}
+
+<style>
+    .errorlist {
+        font-size: 12px;
+        color: red; 
+    }
+</style>
+
+<div class="max-w-lg mx-auto p-6 bg-white rounded-md shadow-md">
+  <h2 class="text-xl font-semibold text-gray-700">Create User</h2>
+  {% comment %} {% url 'update-user' %} {% endcomment %}
+  <form action="{% url 'create_user' %}" method="post"> 
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Create User</button>
+    <a class="block" href="{% url 'user' %}">
+      <button type="button" class="btn btn-secondary">
+        Return Back
+    </button>
+    </a>
+    
+  </form>
+</div>
+{% endblock content %}  

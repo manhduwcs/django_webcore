@@ -1,0 +1,88 @@
+{% extends 'home/base.html' %} {% block content %}
+<style>
+  /* Custom styles for focused rows */
+  tr:focus {
+    background-color: #1e262b;
+    color: white;
+  }
+</style>
+<div class="container mt-3">
+  <a href="{% url 'create_user' %}" class="btn btn-success mb-2">
+    Add New User
+  </a>
+
+  <table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+      <tr>
+        <th>No.</th>
+        <th>Username</th>
+        <th>Full Name</th>
+        <th>Phone</th>
+        <th>Email</th>
+        <th>Action</th>
+        
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+      <tr
+        tabindex="0"
+        data-user-id="{{ user.user_id }}"
+        class="table-row"
+        ondblclick="openDetail('{{ user.user_id }}')"
+      >
+        <td>{{ forloop.revcounter }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.fullname }}</td>
+        <td>{{ user.phone }}</td>
+        <td>{{ user.email }}</td>
+        <td>
+          <div class="d-flex">
+            <a
+              href="{% url 'update_user' user.user_id %}"
+              class="btn btn-warning btn-sm mr-2"
+            >
+              <i class="fa-solid fa-pen"></i>
+            </a>
+
+            <form action="{% url 'delete_user' user.user_id %}" method="post">
+              {% csrf_token %}
+              <button
+                type="submit"
+                class="btn btn-danger btn-sm"
+                onclick="return confirmDelete();"
+              >
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5" class="text-center">No user found!</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script>
+  function openDetail(userId) {
+    window.location.href = `/user/detail/${userId}/`;
+  }
+
+  document.querySelectorAll('tr[tabindex="0"]').forEach((row) => {
+    row.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        const userId = this.getAttribute("data-user-id");
+        openDetail(userId);
+      }
+    });
+  });
+
+  function confirmDelete() {
+    return confirm("Are you sure you want to delete this user?");
+  }
+</script>
+{% endblock content %}

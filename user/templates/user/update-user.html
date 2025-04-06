@@ -1,0 +1,25 @@
+{% extends 'home/base.html' %} 
+{% block content %}
+
+<style>
+    .errorlist {
+        font-size: 12px;
+        color: red; 
+    }
+</style>
+
+<div class="container mt-5">
+  <div class="card">
+    <div class="card-body">
+      <h2 class="card-title">Update User</h2>
+      <form action="{% url 'update_user' user.user_id %}" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary mt-3">Update User</button>
+        <a class="btn btn-secondary mt-3" href="{% url 'user' %}">Return Back</a>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
